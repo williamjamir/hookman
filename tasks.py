@@ -1,6 +1,15 @@
 import sys
 
 import invoke
+from invoke import Collection
+# Only task registered in this global collection will be detected by invoke.
+ns = Collection()
+
+
+@invoke.task
+def codegen(ctx):
+	pass
+ns.add_task(codegen)
 
 
 @invoke.task
@@ -8,6 +17,9 @@ def compile(ctx):
     """
     A task to compile all dlls and pyd necessary for the tests
     """
+	# DO NOT COMPILE
+	
+    return	
     import os
     import shutil
     from pathlib import Path
@@ -54,6 +66,7 @@ def compile(ctx):
 
         else:
             ctx.run(command=call_cmake + '&&' + call_ninja + '&&' + call_install)
+ns.add_task(compile)
 
 
 @invoke.task
@@ -127,6 +140,7 @@ def generate_files(ctx):
                     install(TARGETS {plugin.name} EXPORT ${{PROJECT_NAME}}_export DESTINATION ${{LIBS_DIR}})
                     """
                 ))
+ns.add_task(generate_files)
 
 
 
@@ -138,6 +152,7 @@ def build(ctx):
     generate_files(ctx)
     compile(ctx)
     _create_zip_files(ctx)
+ns.add_task(build)
 
 
 def _create_zip_files(ctx):
