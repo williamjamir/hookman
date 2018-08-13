@@ -54,7 +54,7 @@ def test_get_hook_caller(simple_plugin):
     assert friction_factor(1, 2) == 3
 
 
-def test_get_hook_caller_without_plugin(datadir, compiled_libs_folder, simple_plugin):
+def test_get_hook_caller_without_plugin(datadir, simple_plugin):
     hm = HookMan(specs=simple_plugin['specs'], plugin_dirs=[datadir / 'some_non_existing_folder'])
     hook_caller = hm.get_hook_caller()
     friction_factor = hook_caller.friction_factor()
@@ -70,7 +70,7 @@ def test_plugins_available(simple_plugin):
     assert len(plugins) == 1
     import attr
     assert list(attr.asdict(plugins[0]).keys()) == [
-        'location',
+        'yaml_location',
         'hooks_available',
 
         'author',
@@ -91,8 +91,8 @@ def test_install_plugin_without_lib(mocker, simple_plugin, plugins_zip_folder):
     mocker.patch.object(PluginInfo, '_load_yaml_file', return_value=mocked_config_content)
 
     # Trying to install without a SHARED LIB inside the plugin
-    from hookman.exceptions import PluginNotFoundError
-    with pytest.raises(PluginNotFoundError, match=f"{mocked_config_content['shared_lib_name']} could not be found inside the plugin file"):
+    from hookman.exceptions import SharedLibraryNotFoundError
+    with pytest.raises(SharedLibraryNotFoundError, match=f"{mocked_config_content['shared_lib_name']} could not be found inside the plugin file"):
         hm.install_plugin(plugin_file_path=simple_plugin['zip'], dst_path=simple_plugin['path'])
 
 
@@ -106,14 +106,14 @@ def test_install_with_invalid_dst_path(simple_plugin):
 
 
 def test_install_plugin_duplicate(simple_plugin):
-    hm = HookMan(specs=simple_plugin['specs'], plugin_dirs=[simple_plugin['path']])
+    hm = HookMan(specs=simple_plugin['specs'], plugin_dirs=[simple_plugin['path'].parent])
     import os
     os.makedirs(simple_plugin['path'] / 'simple_plugin')
 
     # Trying to install the plugin in a folder that already has a folder with the same name as the plugin
     from hookman.exceptions import PluginAlreadyInstalledError
     with pytest.raises(PluginAlreadyInstalledError, match=f"Plugin already installed"):
-        hm.install_plugin(plugin_file_path=simple_plugin['zip'], dst_path=simple_plugin['path'])
+        hm.install_plugin(plugin_file_path=simple_plugin['zip'], dst_path=simple_plugin['path'].parent)
 
 
 def test_install_plugin(datadir, simple_plugin):
@@ -128,5 +128,7 @@ def test_remove_plugin(datadir, simple_plugin, simple_plugin_2):
     hm = HookMan(specs=simple_plugin['specs'], plugin_dirs=plugins_dirs)
 
     assert len(hm.get_plugins_available()) == 2
+    assert len(list((datadir/'plugins').iterdir())) == 2
     hm.remove_plugin('Simple Plugin 2')
     assert len(hm.get_plugins_available()) == 1
+    assert len(list((datadir / 'plugins').iterdir())) == 1
