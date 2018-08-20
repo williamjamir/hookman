@@ -23,8 +23,12 @@ class HooksSpecs:
         A list with the hooks available for the project, each hook is represented by a python function
     """
 
-    def __init__(self, *, project_name: str, version: str, pyd_name: str,
-            hooks: List[Callable]) -> None:
+    def __init__(self, *,
+            project_name: str,
+            version: str,
+            pyd_name: str,
+            hooks: List[Callable]
+        ) -> None:
         for hook in hooks:
             self._check_hook_arguments(hook)
         self.project_name = project_name
@@ -80,7 +84,7 @@ class HookMan:
                                               f"the paths that were informed when the HookMan "
                                               f"object was initialized: {self.plugins_dirs}.")
 
-        plugin_name = Path(plugin_file_zip.filename).stem.replace('-linux64','').replace('-win64','')
+        plugin_name = Path(plugin_file_zip.filename).stem.replace('-linux64', '').replace('-win64', '')
 
         plugins_dirs = [x for x in dst_path.iterdir() if x.is_dir()]
 

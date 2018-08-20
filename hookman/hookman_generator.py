@@ -445,7 +445,6 @@ class HookManGenerator:
             cmake_minimum_required(VERSION 3.5.2)
 
             set(PROJECT_NAME {shared_lib_name})
-            project ({shared_lib_name} LANGUAGES CXX C)
             set(ARTIFACTS_DIR ${{CMAKE_CURRENT_SOURCE_DIR}}/artifacts)
 
             if(NOT WIN32)
@@ -455,11 +454,12 @@ class HookManGenerator:
               set(CMAKE_C_FLAGS_DEBUG "-g")
             endif(NOT WIN32)
 
-            set(CMAKE_CXX_FLAGS       "-Wall -Werror=return-type -ftemplate-depth=1024")
             set(CMAKE_CXX_LINK_FLAGS  "-lstdc++")
             set(CMAKE_CXX_FLAGS_DEBUG "-g")
 
             set(CMAKE_C_STANDARD 99)
+            
+            project ({shared_lib_name} LANGUAGES CXX C)
             add_subdirectory(src)
         ''')
         return file_content
@@ -467,7 +467,7 @@ class HookManGenerator:
     def _plugin_src_cmake_file_content(self, shared_lib_name):
         file_content = dedent(f'''\
             add_library({shared_lib_name} SHARED plugin.c hook_specs.h)
-            install(TARGETS acme EXPORT ${{PROJECT_NAME}}_export DESTINATION ${{ARTIFACTS_DIR}})
+            install(TARGETS {shared_lib_name} EXPORT ${{PROJECT_NAME}}_export DESTINATION ${{ARTIFACTS_DIR}})
         ''')
         return file_content
 
@@ -477,9 +477,9 @@ class HookManGenerator:
 
         file_content = dedent(f'''\
             import os
-            import sys
             import shutil
             import subprocess
+            import sys
             from pathlib import Path
 
             current_dir = Path(os.getcwd())
@@ -488,7 +488,7 @@ class HookManGenerator:
             assets = current_dir / "assets"
             build_dir = current_dir / "build"
             package_dir = current_dir / "package"
-            
+
             if sys.platform == 'win32':
                 shared_lib = artifacts_dir / "{lib_name_win}"
             else:
@@ -502,10 +502,11 @@ class HookManGenerator:
             binary_directory_path = f"-B{{str(build_dir)}}"
             home_directory_path = f"-H{{current_dir}}"
 
+            build_generator = "Visual Studio 14 2015 Win64" if sys.platform == "win32" else "Unix Makefiles"
             if artifacts_dir.exists():
                 shutil.rmtree(artifacts_dir)
 
-            subprocess.run(["cmake", binary_directory_path, home_directory_path])
+            subprocess.run(["cmake", binary_directory_path, home_directory_path, "-G", build_generator])
             subprocess.run(["cmake", "--build", str(build_dir), "--config", "Release", "--target", "install"])
 
             if package_dir.exists():
