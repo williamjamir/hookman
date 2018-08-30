@@ -13,10 +13,6 @@ with open('HISTORY.rst') as history_file:
 
 requirements = ['Click>=6.0', 'strictyaml', 'invoke', 'attrs']
 
-setup_requirements = ['pytest-runner', ]
-
-test_requirements = ['pytest', ]
-
 setup(
     author="ESSS",
     author_email='foss@esss.co',
@@ -27,7 +23,7 @@ setup(
         'Natural Language :: English',
         'Programming Language :: Python :: 3.6',
     ],
-    description="A hook manager in python that enables cpp applications call dlls in C/C++",
+    description="HookMan is a python package that provides a plugin management system to applications, specially those who are written (in totally or partially) in C++.",
     entry_points={
         'console_scripts': [
             'hookman=hookman.cli:main',
@@ -41,12 +37,10 @@ setup(
     long_description=readme + '\n\n' + history,
     include_package_data=True,
     keywords='hookman',
-    name='hookman',
+    name='python-hookman',
     packages=find_packages(include=['hookman']),
-    setup_requires=setup_requirements,
-    test_suite='tests',
-    tests_require=test_requirements,
     url='https://github.com/esss/hookman',
-    version='0.1.0',
+    use_scm_version=True,
+    setup_requires=['setuptools_scm'],
     zip_safe=False,
 )
