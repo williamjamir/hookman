@@ -53,6 +53,7 @@ jobs:
         pip install -r requirements_dev.txt
         pip install invoke
         pip install pybind11[global]
+        python install setup.py
         PYBIND11_GLOBAL_SDIST=1 python3 -m pip install https://github.com/pybind/pybind11/archive/master.zip
         
         
