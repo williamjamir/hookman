@@ -53,6 +53,7 @@ jobs:
         pip install -r requirements_dev.txt
         pip install invoke
         pip install pybind11
+        pip install pybind11_cmake
         
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
