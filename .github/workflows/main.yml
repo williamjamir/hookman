@@ -1,14 +1,9 @@
-name: hookman
+name: "Hookman - CI"
 
 on:
   push:
-    branches:
-      - master
-      - rb-*
-
-  pull_request:
-  schedule:
-  - cron: 0 2 * * *
+    branches: [master, rb-*]
+  schedule:  [cron: 0 2 * * *]
 
 jobs:
   test:
@@ -17,13 +12,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.6, 3.7]
+        python-version: [3.6, 3.7, 3.8]
         os: [ubuntu-latest, windows-latest]
         include:
           - python-version: 3.6
             env: "py36"
           - python-version: 3.7
             env: "py37"
+          - python-version: 3.8
+            env: "py38"
 
     steps:
     - uses: actions/checkout@v2
@@ -38,7 +35,7 @@ jobs:
         pip install tox codecov
         # CMake configuration files missing for PyPi install
         # https://github.com/pybind/pybind11/issues/1628#issuecomment-697346676
-        PYBIND11_GLOBAL_SDIST=1 python3 -m pip install https://github.com/pybind/pybind11/archive/master.zip
+        PYBIND11_GLOBAL_SDIST=1 python -m pip install https://github.com/pybind/pybind11/archive/master.zip
     - name: Run tests
       run: |
         tox -e ${{matrix.env}}
