@@ -53,7 +53,9 @@ jobs:
         pip install -r requirements_dev.txt
         pip install invoke
         pip install pybind11[global]
-        python install setup.py
+        pip install Click>=7.0"
+        pip install strictyaml
+        pip install attrs
         PYBIND11_GLOBAL_SDIST=1 python3 -m pip install https://github.com/pybind/pybind11/archive/master.zip
         
         
