@@ -24,6 +24,8 @@ jobs:
             env: "py37"
           - python-version: 3.8
             env: "py38"
+          - python-version: 3.9
+            env: "py39"
 
     steps:
     - uses: actions/checkout@v2
@@ -36,7 +38,6 @@ jobs:
       env:
         PYBIND11_GLOBAL_SDIST: 1
       run: |
-        ls "C:\Program Files (x86)\Microsoft Visual Studio\2019"
         python -m pip install --upgrade pip
         pip install tox codecov
         # CMake configuration files missing for PyPi install
