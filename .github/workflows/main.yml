@@ -36,6 +36,11 @@ jobs:
       env:
         PYBIND11_GLOBAL_SDIST: 1
       run: |
+        ls
+        ls C:\
+        ls "C:\Program Files"
+        ls "C:\Program Files (x86)\"
+        ls "C:\Program Files (x86)\Microsoft Visual Studio"
         python -m pip install --upgrade pip
         pip install tox codecov
         # CMake configuration files missing for PyPi install
