@@ -71,8 +71,7 @@ def generate_build_files(ctx):
 
         # Create the CMakeFile on root of the project to include others CMake files.
         main_cmakelist = project_dir_for_build / "CMakeLists.txt"
-        main_cmakelist_content = []
-        main_cmakelist_content.append("add_subdirectory(cpp)\nadd_subdirectory(binding)\n")
+        main_cmakelist_content = ["add_subdirectory(cpp)\nadd_subdirectory(binding)\n"]
         main_cmakelist_content += [
             f"add_subdirectory(plugin/{plugin.name}/src)\n" for plugin in plugins_dirs
         ]
@@ -104,10 +103,10 @@ def compile_build_files(ctx):
         f'-G Ninja "{build_dir}" '
         f"-DPYTHON_EXECUTABLE={sys.executable} "
     )
-    call_ninja = "ninja -j 8"
-    call_install = "ninja install"
-
     with ctx.cd(str(project_dir / "build/ninja")):
+        call_ninja = "ninja -j 8"
+        call_install = "ninja install"
+
         if sys.platform == "win32":
             paths = (
                 os.path.expandvars(
